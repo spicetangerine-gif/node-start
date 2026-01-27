@@ -1,0 +1,156 @@
+{
+  "products": [
+    {
+      "productId": 1,
+      "productName": "맥북 프로",
+      "price": 2500000,
+      "seller": "애플코리아"
+    },
+    {
+      "productId": 2,
+      "productName": "LG 그램",
+      "price": 1800000,
+      "seller": "LG전자"
+    }
+  ],
+  "reviews": [
+    {
+      "reviewId": 1,
+      "reviewContent": "가볍고 성능 좋아요",
+      "productId": 1,
+      "writer": "홍길동"
+    },
+    {
+      "reviewId": 2,
+      "reviewContent": "배터리 오래감",
+      "productId": 1,
+      "writer": "김철수"
+    },
+    {
+      "reviewId": 3,
+      "reviewContent": "디자인 예쁨",
+      "productId": 2,
+      "writer": "박영희"
+    },
+    {
+      "id": "fd65",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "6c76",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "0262",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "ea46",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "d446",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "30f5",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "f495",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "3823",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "c7ed",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "d15c",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "69fa",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "ab9d",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "6721",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "ee49",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "da5f",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "67d6",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "2040",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "b45b",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "fabb",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "3660",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "ee70",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "95fa",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "f477",
+      "reviewId": "4",
+      "writer": "최길동"
+    },
+    {
+      "id": "764e",
+      "reviewId": "4",
+      "writer": "최길동"
+    }
+  ]
+}
