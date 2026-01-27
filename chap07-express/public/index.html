@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h3>express.static</h3>
+    <form name="actionFrm" 
+          action="upload" 
+          method="post" 
+          enctype="multipart/form-data">
+      아이디: <input type="text" name="user_id" /></br>
+      비밀번호: <input type="text" name="user_pw" /></br>
+      이름: <input type="text" name="user_name" /></br>
+      이미지:<input type="file" name="user_img" /></br>
+      <input type="submit" value="업로드" />
+    </form>
+
+    <script>
+      // fetch 함수를 활용해서 file 전송.
+      document.querySelector('form[name="actionFrm"]')
+      .addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log(e);
+           console.log(document.querySelector('input[name="user_img"]').files[0],
+          );
+          // multipart 요청처리.
+          const formData = new FormData();
+          formData.append(
+            "user_id", 
+          document.querySelector('input[name="user_id"]').value,
+      );
+            formData.append(
+              "user_pw", 
+            document.querySelector('input[name="user_pw"]').value,
+      );
+      formData.append(
+              "user_nm", 
+            document.querySelector('input[name="user_name"]').value,
+      );
+            formData.append(
+              "user_img", 
+            document.querySelector('input[name="user_img"]').files[0],
+      );
+
+// formData => user_name: '홍길동', user_age: 22, file.png
+
+        // fetch함수.
+        fetch('create',{
+          method: "post",
+          body: formData,
+        })
+        .then((resp) => resp.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((err) => console.error(err));
+      });
+    </script>
+  </body>
+</html>
