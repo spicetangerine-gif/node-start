@@ -1,63 +1,202 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>회원가입</title>
+    <style>
+      /* 공통 배경 스타일 (로그인 화면과 통일) */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* 컨테이너 스타일 */
+      .register-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 450px;
+        margin: 20px;
+      }
+
+      h3 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+      }
+
+      /* 입력 그룹 스타일 */
+      .input-group {
+        margin-bottom: 15px;
+        text-align: left;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .input-group input[type="text"],
+      .input-group input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .input-group input:focus {
+        border-color: #764ba2;
+      }
+
+      /* 파일 업로드 커스텀 스타일 */
+      .input-group input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        background: #f9f9f9;
+        border: 1px dashed #bbb;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      /* 업로드 버튼 스타일 */
+      .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background-color: #764ba2;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 10px;
+      }
+
+      .btn-submit:hover {
+        background-color: #5a387d;
+      }
+
+      .footer-links {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #888;
+      }
+
+      .footer-links a {
+        color: #764ba2;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
-    <h3>express.static</h3>
-    <form name="actionFrm" 
-          action="upload" 
-          method="post" 
-          enctype="multipart/form-data">
-      아이디: <input type="text" name="user_id" /></br>
-      비밀번호: <input type="text" name="user_pw" /></br>
-      이름: <input type="text" name="user_name" /></br>
-      이미지:<input type="file" name="user_img" /></br>
-      <input type="submit" value="업로드" />
-    </form>
+    <div class="register-container">
+      <h3>Create Account</h3>
+      <form name="actionFrm">
+        <div class="input-group">
+          <label for="user_id">아이디</label>
+          <input
+            type="text"
+            name="user_id"
+            id="user_id"
+            placeholder="사용할 아이디를 입력하세요"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="user_pw">비밀번호</label>
+          <input
+            type="password"
+            name="user_pw"
+            id="user_pw"
+            placeholder="비밀번호를 입력하세요"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="user_nm">이름</label>
+          <input
+            type="text"
+            name="user_nm"
+            id="user_nm"
+            placeholder="본인의 이름을 입력하세요"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="user_img">프로필 이미지</label>
+          <input type="file" name="user_img" id="user_img" accept="image/*" />
+        </div>
+
+        <button type="submit" class="btn-submit">회원 가입하기</button>
+      </form>
+
+      <div class="footer-links">
+        이미 계정이 있으신가요? <a href="login.html">로그인하러 가기</a>
+      </div>
+    </div>
 
     <script>
       // fetch 함수를 활용해서 file 전송.
-      document.querySelector('form[name="actionFrm"]')
-      .addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log(e);
-           console.log(document.querySelector('input[name="user_img"]').files[0],
-          );
+      document
+        .querySelector('form[name="actionFrm"]') //
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const user_id = document.querySelector('input[name="user_id"]').value;
+          const user_pw = document.querySelector('input[name="user_pw"]').value;
+          const user_nm = document.querySelector('input[name="user_nm"]').value;
+          const user_img = document.querySelector('input[name="user_img"]')
+            .files[0];
+
+          if (!user_id || !user_pw || !user_nm) {
+            alert("필수 항목 입력!");
+            return;
+          }
+
           // multipart 요청처리.
           const formData = new FormData();
-          formData.append(
-            "user_id", 
-          document.querySelector('input[name="user_id"]').value,
-      );
-            formData.append(
-              "user_pw", 
-            document.querySelector('input[name="user_pw"]').value,
-      );
-      formData.append(
-              "user_nm", 
-            document.querySelector('input[name="user_name"]').value,
-      );
-            formData.append(
-              "user_img", 
-            document.querySelector('input[name="user_img"]').files[0],
-      );
+          formData.append("user_id", user_id); // formData의 user_id 속성과 값 추가.
+          formData.append("user_pw", user_pw);
+          formData.append("user_nm", user_nm);
+          formData.append("user_img", user_img);
 
-// formData => user_name: '홍길동', user_age: 22, file.png
+          // formData => user_name: '홍길동', user_age: 22, user_img: File()
 
-        // fetch함수.
-        fetch('create',{
-          method: "post",
-          body: formData,
-        })
-        .then((resp) => resp.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => console.error(err));
-      });
+          // fetch함수.
+          fetch("create", {
+            method: "post",
+            body: formData,
+          }) //
+            .then((resp) => resp.json())
+            .then((data) => {
+              if (data.retCode == "OK") {
+                // 가입성공하면 member.html 이동.
+                location.href = "member.html";
+              } else {
+                // 실패하면 경고창 출력.
+                alert(data.retMsg);
+              }
+            })
+            .catch((err) => console.error(err));
+        });
     </script>
   </body>
 </html>

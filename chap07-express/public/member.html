@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>멤버 페이지</title>
+    <style>
+      /* 공통 배경 스타일 (로그인/회원가입과 통일) */
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* 메인 컨테이너 */
+      .list-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 800px;
+      }
+
+      h3 {
+        color: #333;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 24px;
+        border-bottom: 2px solid #764ba2;
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+
+      /* 테이블 스타일링 */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      thead {
+        background-color: #f8f9fa;
+      }
+
+      th {
+        padding: 15px;
+        text-align: left;
+        color: #555;
+        font-weight: 600;
+        border-bottom: 2px solid #eee;
+      }
+
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        color: #444;
+      }
+
+      /* 마우스 올렸을 때 행 강조 */
+      tbody tr:hover {
+        background-color: #fcfaff;
+        transition: background 0.2s;
+      }
+
+      /* 이미지 스타일 */
+      .profile-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%; /* 원형 이미지 */
+        border: 2px solid #764ba2;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 하단 버튼 (로그아웃이나 가입화면 이동용) */
+      .action-bar {
+        margin-top: 20px;
+        text-align: right;
+      }
+
+      .btn-back {
+        text-decoration: none;
+        color: #764ba2;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      /* 삭제 버튼 스타일 */
+      .btn-delete {
+        background-color: #ff4d4f;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 600;
+        transition:
+          background-color 0.2s,
+          transform 0.1s,
+          box-shadow 0.1s;
+      }
+
+      .btn-delete:hover {
+        background-color: #e6393b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-delete:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="list-container">
+      <div style="text-align: center">
+        <h3>Member List</h3>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>아이디</th>
+            <th>이름</th>
+            <th style="text-align: center">사진</th>
+            <th>회원삭제</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+
+      <div class="action-bar">
+        <a href="index.html" class="btn-back">회원 가입</a>
+      </div>
+    </div>
+
+    <script>
+      const role = localStorage.getItem("role"); // role 속성으로 지정된 값.
+      const uid = localStorage.getItem("uid");
+      // DOM 객체.
+      let txt = document.createTextNode("(당신은 손님입니다)");
+      if (role || uid) {
+        // alert(`${uid}의 권한은 ${role}`);
+        txt = document.createTextNode(`(${uid}의 권한은 ${role})`);
+      }
+      document.querySelector("h3").appendChild(txt);
+
+      // 목록 가져오기 위한 라우팅 정보 확인
+      fetch("list")
+        .then((resp) => resp.json())
+        .then((data) => {
+          const listBody = document.querySelector("#list");
+          data.forEach((elem) => {
+            listBody.insertAdjacentHTML(
+              "beforeend",
+              `<tr id="member_${elem.user_id}">
+                 <td><strong>${elem.user_id}</strong></td>
+                 <td>${elem.user_name}</td>
+                 <td style="text-align: center;">
+                   <img class="profile-img" src="images/${elem.user_img}" alt="${elem.user_name}">
+                 </td>
+                 <td><button class="btn-delete" onclick="deleteMember('${elem.user_id}')">삭제</button></td>
+               </tr>`,
+            );
+          });
+        })
+        .catch((err) => {
+          console.error("데이터 로드 실패:", err);
+          document.querySelector("#list").innerHTML =
+            '<tr><td colspan="3" style="text-align:center;">데이터를 불러올 수 없습니다.</td></tr>';
+        });
+
+      // deleteMember() 함수정의.
+      function deleteMember(uid) {
+        if (role == "Admin") {
+          if (confirm("삭제하겠습니까?")) {
+            // remove();
+            fetch("/delete/" + uid, { method: "delete" })
+              .then((resp) => resp.json())
+              .then((data) => {
+                if (data.retCode == "OK") {
+                  document.querySelector("#member_" + uid).remove();
+                  alert("삭제되었습니다.");
+                } else {
+                  alert("삭제 중 예외.");
+                }
+              })
+              .catch(console.log);
+          }
+        } else {
+          alert("삭제권한이 없습니다");
+        }
+      }
+    </script>
+  </body>
+</html>

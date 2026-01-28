@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 페이지</title>
+    <style>
+      /* 전체 배경 스타일 */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* 로그인 컨테이너 */
+      .login-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      /* 입력 필드 스타일 */
+      .input-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box; /* 패딩 포함 크기 조절 */
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .input-group input:focus {
+        border-color: #764ba2;
+      }
+
+      /* 버튼 스타일 */
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #764ba2;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background-color: #5a387d;
+      }
+
+      /* 추가 링크 */
+      .footer-links {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #888;
+      }
+
+      .footer-links a {
+        color: #764ba2;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Welcome Back</h2>
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="username">사용자 아이디</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="아이디를 입력하세요"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="password">비밀번호</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="비밀번호를 입력하세요"
+            required
+          />
+        </div>
+        <button type="submit">로그인</button>
+      </form>
+      <div class="footer-links">
+        계정이 없으신가요? <a href="index.html">회원가입</a>
+      </div>
+    </div>
+
+    <script>
+      const loginForm = document.getElementById("loginForm");
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          // json-server에서 사용자 정보를 확인하는 예시 로직
+          // 실제로는 암호화 등을 고려해야 하지만, 테스트용으로 filter 쿼리를 사용합니다.
+          const response = await fetch("login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: username,
+              user_pw: password,
+            }),
+          });
+          const result = await response.json();
+
+          if (result.retCode == "OK") {
+            alert(`회원님, 환영합니다!`);
+            location.href = "member.html";
+            // 성공 시 메인 페이지로 이동 등 후속 처리
+          } else {
+            alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+          }
+        } catch (error) {
+          console.error("에러 발생:", error);
+          alert("서버와 통신하는 중 문제가 발생했습니다.");
+        }
+      });
+    </script>
+  </body>
+</html>
