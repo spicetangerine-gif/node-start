@@ -1,12 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
-const app = express(); // 인스턴스.
 const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
-
+const transporter = require("./extensions/nodemailer");
 const pool = require("./db");
+const cron_job = require("./extensions/nodecron");
 
+const app = express(); // 인스턴스.
 // 포트: 3000
 const SERVER_PORT = 3000;
 
@@ -45,6 +47,99 @@ app.get("/", (req, res) => {
 // 라우팅 파일.
 app.use("/sample", require("./routes/sample.route"));
 
+app.get("/start", (req, res) => {
+  cron_job.start();
+  console.log("메일발송 시작됨.");
+  res.send("메일발송 시작됨.");
+});
+
+app.get("/stop", (req, res) => {
+  cron_job.stop();
+  console.log("메일발송 종료됨.");
+  res.send("메일발송 종료됨.");
+});
+
+// /members/guest@mail.com
+app.get("/members/:to", async (req, res) => {
+  // to:수신자.
+  const to = req.params.to;
+  // member 테이블조회.
+  let [result, sec] = await pool.query(
+    "select * from member where responsibility = 'User'",
+  );
+  let html = '<table border="2">';
+  html += `<thead>
+      <tr>
+      <th>아이디</th>
+        <th>이름</th>
+        <th>이미지</th>
+        <th>권한</th>
+      </tr>
+    </thead>`;
+  html += "<tbody>";
+  html += result;
+  map(
+    (elem) =>
+      `<tr>
+        <td>${elem.user_id}</td>
+        <td>${elem.user_id}</td>
+        <td>${elem.user_id}</td>
+        <td>${elem.user_id}</td>
+      </tr>`,
+  ).join("");
+  // 결과: result
+  transporter.sendMail(
+    {
+      from: process.env.FROM,
+      to,
+      subject: "회원목록",
+      html,
+    },
+    (err, info) => {
+      if (err) {
+        res.json({ retCode: "NG", retMsg: err });
+      }
+      res.json({ retCode: "OK", retMsg: info });
+    },
+  );
+});
+
+// 메일발송.
+app.post("/mail_send", upload.single("img"), (req, res) => {
+  const { to, subject, text } = req.body;
+  console.log(req.file.filename);
+
+  const html = text
+    .split("\n")
+    .map((elem) => "<p>" + elem + "</p>")
+    .join("");
+
+  // 메일발송.
+  transporter.sendMail(
+    {
+      from: process.env.FROM,
+      to,
+      subject,
+      html,
+      attachments: [
+        {
+          path: path.join(__dirname, "public/images", req.file.filename),
+        },
+      ],
+    },
+    (err, info) => {
+      if (err) {
+        console.log("error", err);
+        res.json({ retCode: "NG", retMsg: err });
+      }
+      console.log(`ok`, info);
+      res.json({ retCode: "OK", retMsg: info });
+    },
+  ); // 메일발송.
+
+  console.log("sendmail start==>");
+});
+
 app.post("/upload", upload.single("user_img"), (req, res) => {
   console.log(req.body);
   console.log(req.file.filename);
@@ -66,9 +161,10 @@ app.post("/login", async (req, res) => {
   // 암호화 비번.
   let passwd = crypto.createHash("sha512").update(user_pw).digest("base64");
   let [result, sec] = await pool.query(
-    "select count(*) as cnt from member where user_id=? and user_pw=?",
+    "select user_name, responsibility from member where user_id=? and user_pw=?",
     [user_id, passwd],
   );
+  console.log(result);
   // 응답.
   if (result.length > 0) {
     res.json({
@@ -89,19 +185,24 @@ app.delete("/delete/:id", async (req, res) => {
     "select user_img from member where user_id = ?",
     [uid],
   );
+  // 삭제쿼리.
+  const result = await pool.query("delete from member where user_id = ?", [
+    uid,
+  ]);
   // 이미지삭제.
   if (result[0].affectedRows) {
     // 삭제된 회원의 이미지도 같이 지워주기.
     const ufile = path.join(__dirname, "public/images", data[0].user_img);
 
-    fs.unlike(ufile, (err) => {
+    fs.unlink(ufile, (err) => {
       if (err) {
         console.log(`${ufile} 삭제중 에러.`);
       } else {
-        console.log(`${ufile} 샂제 완료.`);
+        console.log(`${ufile} 삭제 완료.`);
       }
     });
-    (res, json({ retCode: "OK" }));
+
+    res.json({ retCode: "OK" });
   } else {
     res.json({ retCode: "NG" });
   }
