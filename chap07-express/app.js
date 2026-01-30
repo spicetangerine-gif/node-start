@@ -30,7 +30,25 @@ const storage = multer.diskStorage({
   },
 });
 
+const storage1 = multer.diskStorage({
+  // 저장경로1.
+  destination: (req, file, cb) => {
+    console.log(file);
+    cb(null, "public/uploads");
+  },
+  // 파일이름.
+  filename: (req, file, cb) => {
+    const file_name = Buffer.from(file.originalname, "latin1") //
+      .toString("utf-8");
+    // 키보드_12131312390.png
+    const fn = file_name.substring(0, file_name.indexOf("."));
+    const ext = file_name.substring(file_name.indexOf("."));
+    cb(null, fn + "_" + Date.now() + ext);
+  },
+});
+
 const upload = multer({ storage }); // multer 인스턴스.
+const upload1 = multer({ storage1 }); // multer 인스턴스.
 
 // public 폴더의 html, css, js url을 통해서 접근.
 app.use(express.static("public"));
@@ -46,6 +64,10 @@ app.get("/", (req, res) => {
 });
 // 라우팅 파일.
 app.use("/sample", require("./routes/sample.route"));
+
+// 엑셀업로드 -> 신규회원추가.
+// 요청방식:post, url; /upload/member, 엑셀연습1.xlsx 파일.
+app.post("/upload/member", upload1.single(""), async (req, res) => {});
 
 app.get("/start", (req, res) => {
   cron_job.start();
